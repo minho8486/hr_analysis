@@ -91,3 +91,52 @@ if col_name in df.columns:
         ax3.bar_label(ax3.containers[0], fmt="%.1f", fontsize=10)
         ax3.bar_label(ax3.containers[1], fmt="%.1f", fontsize=10)
         st.pyplot(fig3)
+
+# ===== 📌 한 줄 요약 =====
+if quit_rate > 20:
+    summary = f"📌 현재 퇴직율은 **{quit_rate:.1f}%**로, 인력 관리에 주의가 필요합니다."
+else:
+    summary = f"📌 현재 퇴직율은 **{quit_rate:.1f}%**로, 전반적으로 안정적인 수준입니다."
+
+st.markdown(summary)
+
+# ===== 💡 주요 인사이트 =====
+st.subheader("💡 주요 인사이트")
+
+insights = []
+
+# 1) 전체 퇴직율 관련
+if quit_rate > 20:
+    insights.append(f"- 전체 직원 중 **{quit_rate:.1f}%**가 퇴직하여 관리가 필요합니다.")
+else:
+    insights.append(f"- 전체 퇴직율은 **{quit_rate:.1f}%**로 비교적 안정적인 수준입니다.")
+
+# 2) 부서별 퇴직율 관련
+if "부서" in df.columns:
+    dept_mean = df["퇴직"].mean()*100
+    high_dept = dept[dept > dept_mean + 5].index.tolist()
+    low_dept = dept[dept < dept_mean - 5].index.tolist()
+    if high_dept:
+        insights.append(f"- **{', '.join(high_dept)} 부서**는 평균보다 퇴직율이 높아 주의가 필요합니다.")
+    if low_dept:
+        insights.append(f"- 반대로 **{', '.join(low_dept)} 부서**는 퇴직율이 낮아 안정적입니다.")
+
+# 3) 급여 인상률 관련
+if "급여증가분백분율" in df.columns:
+    min_sal, max_sal = sal.idxmin(), sal.idxmax()
+    if sal[min_sal] > sal[max_sal]:
+        insights.append(f"- **급여 인상률이 낮은 그룹**에서 퇴직율이 더 높습니다. 보상 정책 점검이 필요합니다.")
+    else:
+        insights.append(f"- 급여 인상률과 퇴직율 간의 뚜렷한 상관관계는 보이지 않습니다.")
+
+# 4) 야근 여부 관련
+if col_name in df.columns:
+    if ot.max() - ot.min() > 5:
+        high_ot = ot.idxmax()
+        insights.append(f"- **{high_ot} 그룹**에서 퇴직율이 높게 나타납니다. 근무 환경 개선이 필요합니다.")
+
+# Streamlit 박스로 출력
+if insights:
+    st.info("\n".join(insights))
+else:
+    st.info("특별한 인사이트가 발견되지 않았습니다.")
