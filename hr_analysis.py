@@ -54,7 +54,8 @@ if "부서" in df.columns:
     sns.barplot(x=dept.index, y=dept.values, ax=ax1, palette="coolwarm")
     ax1.set_xlabel("부서", fontproperties=fontprop)
     ax1.set_ylabel("퇴직율(%)", fontproperties=fontprop)
-    ax1.bar_label(ax1.containers[0], fmt="%.1f", fontsize=10)
+    for i in range(len(ax1.containers)):
+        ax1.bar_label(ax1.containers[i], fmt="%.1f", fontsize=10)
     plt.xticks(rotation=20)
     st.pyplot(fig1)
 
@@ -88,4 +89,5 @@ if col_name in df.columns:
         ax3.set_xlabel("야근 여부", fontproperties=fontprop)
         ax3.set_ylabel("퇴직율(%)", fontproperties=fontprop)
         ax3.bar_label(ax3.containers[0], fmt="%.1f", fontsize=10)
+        ax3.bar_label(ax3.containers[1], fmt="%.1f", fontsize=10)
         st.pyplot(fig3)
