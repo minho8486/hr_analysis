@@ -81,7 +81,6 @@ if "급여증가분백분율" in df.columns:
 col_name = "야근정도"
 if col_name in df.columns:
     ot = (df.groupby(col_name)["퇴직"].mean()*100)
-#    ot.index = ot.index.map({"No":"없음","Yes":"있음"}).astype(str)
     with c2:
         st.subheader("⏰ 야근정도별 퇴직율")
         fig3, ax3 = plt.subplots(figsize=(7,3.5))
