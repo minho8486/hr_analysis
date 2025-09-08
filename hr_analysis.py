@@ -3,10 +3,23 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import matplotlib.font_manager as fm
+import warnings
+warnings.filterwarnings(action='ignore')
+import os
 
-# Streamlit 페이지 설정
+
 st.set_page_config(page_title="퇴직율 대시보드", layout="wide")
-sns.set(style="whitegrid", font="Malgun Gothic")
+sns.set(style="whitegrid")
+
+# 폰트 경로를 직접 지정
+font_dir = "./font"
+font_path = os.path.join(font_dir, "NotoSansKR-Regular.ttf")
+
+fontprop = fm.FontProperties(fname=font_path)
+
+plt.rcParams["font.family"] = fontprop.get_name()
+plt.rcParams["axes.unicode_minus"] = False
 
 # 1) 데이터 로드
 @st.cache_data
@@ -14,7 +27,7 @@ def load_df(path:str ="HR Data.csv") -> pd.DataFrame:
     try:
         df = pd.read_csv(path, encoding="utf-8")
     except: 
-        return df 
+        return pd.DataFrame()
     df["퇴직"] = df["퇴직여부"].map({"Yes":1, "No":0}).astype("int8")
     df.drop(['직원수', '18세이상'], axis=1, inplace=True)
     return df
@@ -42,8 +55,9 @@ if "부서" in df.columns:
     st.subheader("부서별 퇴직율")
     fig1, ax1 = plt.subplots(figsize=(7.5,3.8))
     sns.barplot(x=dept.index, y=dept.values, ax=ax1)
-    ax1.set_ylabel("퇴직율(%)"); 
-    ax1.bar_label(ax1.containers[0], fmt="%.1f")
+    ax1.set_xlabel("부서", fontproperties=fontprop)
+    ax1.set_ylabel("퇴직율(%)", fontproperties=fontprop); 
+    labels = ax1.bar_label(ax1.containers[0], fmt="%.1f")
     plt.xticks(rotation=15); 
     st.pyplot(fig1)
 
@@ -59,8 +73,8 @@ if "급여증가분백분율" in df.columns:
         st.subheader("💰 급여인상율과 퇴직율")
         fig2, ax2 = plt.subplots(figsize=(6.5,3.5))
         sns.lineplot(x=sal.index, y=sal.values, marker="o", ax=ax2)
-        ax2.set_xlabel("급여인상율(%)"); 
-        ax2.set_ylabel("퇴직율(%)")
+        ax2.set_xlabel("급여인상율(%)", fontproperties=fontprop); 
+        ax2.set_ylabel("퇴직율(%)", fontproperties=fontprop)
         st.pyplot(fig2)
 
 # (우) 야근정도별 퇴직율 (Yes/No 막대)
@@ -72,6 +86,7 @@ if col_name in df.columns:
         st.subheader("⏰ 야근정도별 퇴직율")
         fig3, ax3 = plt.subplots(figsize=(6.5,3.5))
         sns.barplot(x=ot.index, y=ot.values, ax=ax3)
-        ax3.set_ylabel("퇴직율(%)"); 
+        ax3.set_xlabel("야근 여부", fontproperties=fontprop)
+        ax3.set_ylabel("퇴직율(%)", fontproperties=fontprop); 
         ax3.bar_label(ax3.containers[0], fmt="%.1f")
         st.pyplot(fig3)
