@@ -4,14 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-#import matplotlib.font_manager as fm
-
-# NanumGothic 폰트 경로를 직접 지정
-# font_path = "C:/Windows/Fonts/NanumGothic.ttf"
-# fontprop = fm.FontProperties(fname=font_path)
-# plt.rcParams["font.family"] = "NanumGothic"
-# plt.rcParams["axes.unicode_minus"] = False
-
 # Streamlit 페이지 설정
 st.set_page_config(page_title="퇴직율 대시보드", layout="wide")
 sns.set(style="whitegrid", font="Malgun Gothic")
